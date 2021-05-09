@@ -1,3 +1,7 @@
+use std::env;
+
 fn main() {
-    println!("Hello, world!");
+    let test = env::args();
+
+    println!("{:?}", test);
 }
