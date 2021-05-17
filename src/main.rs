@@ -1,4 +1,8 @@
 use std::env;
+use std::fs::File;
+
+use std::io;
+use std::io::prelude::*;
 
 fn main() {
     let test = PathArgs::new(env::args());
@@ -34,5 +38,28 @@ impl PathArgs {
             from,
             target,
         }
+    }
+
+    fn env_read_to_string(&self, path: &String) -> Result<String, io::Error> {
+        let mut f = File::open(path)?;
+        let mut contents = String::new();
+
+        f.read_to_string(&mut contents);
+
+        Ok(contents)
+    }
+
+    fn to_env_text(&self) -> Result<(EnvText, EnvText), io::Error> {
+        let from_file = self.env_read_to_string(&self.from)?;
+        let target_file = self.env_read_to_string(&self.target)?;
+        
+        Ok((
+            EnvText {
+                text: from_file
+            },
+            EnvText {
+                text: target_file
+            }
+        ))
     }
 }
