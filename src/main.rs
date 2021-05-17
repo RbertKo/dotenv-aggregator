@@ -12,6 +12,11 @@ struct PathArgs {
     target: String,
 }
 
+#[derive(Debug)]
+struct EnvText {
+    text: String,
+}
+
 impl PathArgs {
     fn new(args: env::Args) -> PathArgs {
         let _args: Vec<String> = args.collect();
