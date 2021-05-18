@@ -40,7 +40,7 @@ impl PathArgs {
         }
     }
 
-    fn env_read_to_string(&self, path: &String) -> Result<String, io::Error> {
+    fn read_env_to_string(&self, path: &String) -> Result<String, io::Error> {
         let mut f = File::open(path)?;
         let mut contents = String::new();
 
@@ -50,8 +50,8 @@ impl PathArgs {
     }
 
     fn to_env_text(&self) -> Result<(EnvText, EnvText), io::Error> {
-        let from_file = self.env_read_to_string(&self.from)?;
-        let target_file = self.env_read_to_string(&self.target)?;
+        let from_file = self.read_env_to_string(&self.from)?;
+        let target_file = self.read_env_to_string(&self.target)?;
         
         Ok((
             EnvText {
