@@ -44,7 +44,7 @@ impl PathArgs {
         let mut f = File::open(path)?;
         let mut contents = String::new();
 
-        f.read_to_string(&mut contents);
+        f.read_to_string(&mut contents)?;
 
         Ok(contents)
     }
