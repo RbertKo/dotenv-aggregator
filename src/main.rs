@@ -7,7 +7,7 @@ use std::io::prelude::*;
 fn main() {
     let test = PathArgs::new(env::args());
 
-    println!("{:?}", test);
+    println!("{:?}", test.to_env_text());
 }
 
 #[derive(Debug)]
