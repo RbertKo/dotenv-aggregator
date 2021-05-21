@@ -19,6 +19,7 @@ struct PathArgs {
 #[derive(Debug)]
 struct EnvText {
     text: String,
+    parsed_text: String,
 }
 
 impl PathArgs {
