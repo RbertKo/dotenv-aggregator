@@ -64,3 +64,7 @@ impl PathArgs {
         ))
     }
 }
+
+impl EnvText {
+    
+}
