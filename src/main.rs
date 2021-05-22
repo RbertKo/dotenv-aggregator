@@ -19,7 +19,7 @@ struct PathArgs {
 #[derive(Debug)]
 struct EnvText {
     text: String,
-    parsed_text: String,
+    parsed_text: Option<String>,
 }
 
 impl PathArgs {
@@ -55,16 +55,17 @@ impl PathArgs {
         let target_file = self.read_env_to_string(&self.target)?;
         
         Ok((
-            EnvText {
-                text: from_file
-            },
-            EnvText {
-                text: target_file
-            }
+            EnvText::new(from_file),
+            EnvText::new(target_file),
         ))
     }
 }
 
 impl EnvText {
-    
+    fn new(text: String) -> EnvText {
+        EnvText {
+            text,
+            parsed_text: None,
+        }
+    }
 }
