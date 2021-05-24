@@ -79,7 +79,11 @@ impl EnvText {
         let index = self.text.find('=');
 
         if let Some(_index) = index {
-            println!("{}", _index);
+            let key = &self.text[0 .. _index];
+            let value = &self.text[_index+1 .. self.text.len()];
+
+            println!("key: {}", key);
+            println!("value: {}", value);
         }
     }
 }
