@@ -7,7 +7,13 @@ use std::io::prelude::*;
 fn main() {
     let test = PathArgs::new(env::args());
 
-    println!("{:?}", test.to_env_text());
+    let test = test.to_env_text();
+
+    if let Ok(env) = test {
+        let (test1, _) = env;
+
+        test1.convert();
+    }
 }
 
 #[derive(Debug)]
@@ -66,6 +72,14 @@ impl EnvText {
         EnvText {
             text,
             parsed_text: None,
+        }
+    }
+
+    pub fn convert(&self) {
+        let index = self.text.find('=');
+
+        if let Some(_index) = index {
+            println!("{}", _index);
         }
     }
 }
