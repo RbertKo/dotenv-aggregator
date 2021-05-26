@@ -4,6 +4,8 @@ use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 
+use std::collections::HashMap;
+
 fn main() {
     let test = PathArgs::new(env::args());
 
@@ -25,7 +27,7 @@ struct PathArgs {
 #[derive(Debug)]
 struct EnvText {
     text: String,
-    parsed_text: Option<String>,
+    parsed_text: Option<HashMap<String, String>>,
 }
 
 impl PathArgs {
