@@ -77,15 +77,20 @@ impl EnvText {
         }
     }
 
-    pub fn convert(&self) {
+    pub fn convert(&mut self) {
         let index = self.text.find('=');
 
         if let Some(_index) = index {
             let key = &self.text[0 .. _index];
             let value = &self.text[_index+1 .. self.text.len()];
 
-            println!("key: {}", key);
-            println!("value: {}", value);
+            if let None = self.parsed_text {
+                self.parsed_text = Some(HashMap::new());
+            }
+
+            if let Some(_parsed_text) = &self.parsed_text {
+                _parsed_text.insert(String::from(key), String::from(value));
+            }
         }
     }
 }
