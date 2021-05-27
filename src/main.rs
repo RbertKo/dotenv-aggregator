@@ -27,7 +27,13 @@ struct PathArgs {
 #[derive(Debug)]
 struct EnvText {
     text: String,
-    parsed_text: Option<HashMap<String, String>>,
+    parsed_text: Option<Vec<Item>>,
+}
+
+#[derive(Debug)]
+enum Item {
+    Comment(String),
+    Env(String, String),
 }
 
 impl PathArgs {
@@ -77,20 +83,30 @@ impl EnvText {
         }
     }
 
+    fn parse_line(&mut self, text_line: String) {
+        let index = text_line.find('=');
+
+        if let None = self.parsed_text {
+            self.parsed_text = Some(Vec::new());
+        }
+
+        if let Some(_parsed_text) = &mut self.parsed_text {
+            if let Some(_index) = index {
+                let key = &text_line[0 .. _index];
+                let value = &text_line[_index+1 .. self.text.len()];
+
+                _parsed_text.push(Item::Env(String::from(key), String::from(value)));
+            } else {
+                _parsed_text.push(Item::Comment(text_line));
+            }
+        }
+    }
+
     pub fn convert(&mut self) {
-        let index = self.text.find('=');
+        let text_lines: Vec<&str> = self.text.split('\n').collect();
 
-        if let Some(_index) = index {
-            let key = &self.text[0 .. _index];
-            let value = &self.text[_index+1 .. self.text.len()];
-
-            if let None = self.parsed_text {
-                self.parsed_text = Some(HashMap::new());
-            }
-
-            if let Some(_parsed_text) = &self.parsed_text {
-                _parsed_text.insert(String::from(key), String::from(value));
-            }
+        for text in text_lines {
+            self.parse_line(String::from(text));
         }
     }
 }
