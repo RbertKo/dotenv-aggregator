@@ -33,14 +33,14 @@ struct PathArgs {
 #[derive(Debug)]
 struct EnvText {
     text: String,
-    parsed_text: Option<Vec<Item>>,
+    parsed_text: Option<HashMap<String, String>>,
 }
 
-#[derive(Debug)]
-enum Item {
-    Comment(String),
-    Env(String, String),
-}
+// #[derive(Debug)]
+// enum Item {
+//     Comment(String),
+//     Env(String, String),
+// }
 
 impl PathArgs {
     fn new(args: env::Args) -> PathArgs {
@@ -93,7 +93,7 @@ impl EnvText {
         let index = text_line.find('=');
 
         if let None = self.parsed_text {
-            self.parsed_text = Some(Vec::new());
+            self.parsed_text = Some(HashMap::new());
         }
 
         if let Some(_parsed_text) = &mut self.parsed_text {
@@ -101,9 +101,9 @@ impl EnvText {
                 let key = &text_line[0 .. _index];
                 let value = &text_line[_index+1 .. text_line.len()];
 
-                _parsed_text.push(Item::Env(String::from(key), String::from(value)));
+                _parsed_text.insert(String::from(key), String::from(value));
             } else {
-                _parsed_text.push(Item::Comment(text_line));
+                // _parsed_text.push(Item::Comment(text_line));
             }
         }
     }
