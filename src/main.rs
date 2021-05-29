@@ -12,9 +12,15 @@ fn main() {
     let test = test.to_env_text();
 
     if let Ok(env) = test {
-        let (test1, _) = env;
+        let (mut test1, test2) = env;
 
         test1.convert();
+
+        println!("{:?}", test1.parsed_text);
+
+        test1.update_text(test2.text);
+
+        println!("{:?}", test1);
     }
 }
 
@@ -93,7 +99,7 @@ impl EnvText {
         if let Some(_parsed_text) = &mut self.parsed_text {
             if let Some(_index) = index {
                 let key = &text_line[0 .. _index];
-                let value = &text_line[_index+1 .. self.text.len()];
+                let value = &text_line[_index+1 .. text_line.len()];
 
                 _parsed_text.push(Item::Env(String::from(key), String::from(value)));
             } else {
@@ -102,15 +108,13 @@ impl EnvText {
         }
     }
 
-    pub fn update_text(mut self, text: String) -> Self {
+    pub fn update_text(&mut self, text: String) {
         self.text = text;
         self.parsed_text = None;
-
-        self
     }
 
     pub fn convert(&mut self) {
-        let text_lines: Vec<&str> = self.text.split('\n').collect();
+        let text_lines: Vec<String> = self.text.split('\n').map(|x| String::from(x)).collect();
 
         for text in text_lines {
             self.parse_line(String::from(text));
