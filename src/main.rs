@@ -117,7 +117,7 @@ impl EnvText {
         let text_lines: Vec<String> = self.text.split('\n').map(|x| String::from(x)).collect();
 
         for text in text_lines {
-            self.parse_line(String::from(text));
+            self.parse_line(text);
         }
     }
 }
