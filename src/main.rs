@@ -102,6 +102,13 @@ impl EnvText {
         }
     }
 
+    pub fn update_text(mut self, text: String) -> Self {
+        self.text = text;
+        self.parsed_text = None;
+
+        self
+    }
+
     pub fn convert(&mut self) {
         let text_lines: Vec<&str> = self.text.split('\n').collect();
 
