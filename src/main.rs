@@ -120,4 +120,8 @@ impl EnvText {
             self.parse_line(text);
         }
     }
+
+    pub fn migrate_from() {
+
+    }
 }
