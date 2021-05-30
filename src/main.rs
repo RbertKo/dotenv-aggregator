@@ -43,7 +43,7 @@ struct EnvText {
 // }
 
 impl PathArgs {
-    fn new(args: env::Args) -> PathArgs {
+    pub fn new(args: env::Args) -> PathArgs {
         let _args: Vec<String> = args.collect();
         let from: String;
         let target: String;
@@ -70,7 +70,7 @@ impl PathArgs {
         Ok(contents)
     }
 
-    fn to_env_text(&self) -> Result<(EnvText, EnvText), io::Error> {
+    pub fn to_env_text(&self) -> Result<(EnvText, EnvText), io::Error> {
         let from_file = self.read_env_to_string(&self.from)?;
         let target_file = self.read_env_to_string(&self.target)?;
         
