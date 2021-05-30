@@ -82,7 +82,7 @@ impl PathArgs {
 }
 
 impl EnvText {
-    fn new(text: String) -> EnvText {
+    pub fn new(text: String) -> EnvText {
         EnvText {
             text,
             parsed_text: None,
