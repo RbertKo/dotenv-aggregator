@@ -101,7 +101,7 @@ impl EnvText {
                 let key = &text_line[0 .. _index];
                 let value = &text_line[_index+1 .. text_line.len()];
 
-                _parsed_text.insert(String::from(key), String::from(value));
+                _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
             } else {
                 // _parsed_text.push(Item::Comment(text_line));
             }
@@ -121,7 +121,16 @@ impl EnvText {
         }
     }
 
-    pub fn migrate_from() {
+    pub fn migrate_from(&mut self, from: &EnvText) {
+        if self.parsed_text == None {
+            // return Result::Err("This instance isn't converted yet.");
+        }
 
+        if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
+            for (key, value) in from_map {
+                target_map[key] = String::from(value);
+                
+            }
+        }
     }
 }
