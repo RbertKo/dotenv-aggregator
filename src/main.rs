@@ -19,55 +19,42 @@ fn main() {
 
     let test = test.to_env_text();
 
-    if let Ok(env) = test {
-        let (mut test1, test2) = env;
+    // if let Ok(env) = test {
+    //     let (mut test1, test2) = env;
 
-        {
-            test1.convert();
-        }
+    //     {
+    //         test1.convert();
+    //     }
         
-        println!("{:?}", test1.parsed_text);
+    //     println!("{:?}", test1.parsed_text);
 
-        test1.update_text(test2.text);
+    //     test1.update_text(test2.text);
 
-        println!("{:?}", test1);
-    }
+    //     println!("{:?}", test1);
+    // }
 }
 
 #[derive(Debug)]
 struct PathArgs<'a> {
-    from: &'a String,
-    target: &'a String,
+    from: &'a str,
+    target: &'a str,
 }
 
 #[derive(Debug)]
 struct EnvText<'a> {
-    text: &'a String,
+    text: String,
     parsed_text: Option<HashMap<&'a str, String>>,
 }
 
-// #[derive(Debug)]
-// enum Item {
-//     Comment(String),
-//     Env(String, String),
-// }
-
 impl<'a> PathArgs<'a> {
-    pub fn new(from: &'a String, target: &'a String) -> PathArgs<'a> {
-        // if let (Some(_from), Some(_target)) = (_args.get(1), _args.get(2)) {
-        //     from = _from;
-        //     target = _target;
-        // } else {
-        //     panic!("You've to send arguments \"from\", \"target\"")
-        // }
-    
+    pub fn new(from: &'a str, target: &'a str) -> PathArgs<'a> {
         PathArgs {
             from,
             target,
         }
     }
 
-    fn read_env_to_string(&self, path: &String) -> Result<String, io::Error> {
+    fn read_env_to_string(&self, path: &str) -> Result<String, io::Error> {
         let mut f = File::open(path)?;
         let mut contents = String::new();
 
@@ -81,14 +68,14 @@ impl<'a> PathArgs<'a> {
         let target_file = self.read_env_to_string(&self.target)?;
         
         Ok((
-            EnvText::new(&from_file),
-            EnvText::new(&target_file),
+            EnvText::new(from_file),
+            EnvText::new(target_file),
         ))
     }
 }
 
 impl<'a> EnvText<'a> {
-    pub fn new(text: &'a String) -> EnvText<'a> {
+    pub fn new(text: String) -> EnvText<'a> {
         EnvText {
             text,
             parsed_text: None,
@@ -114,13 +101,14 @@ impl<'a> EnvText<'a> {
         }
     }
 
-    pub fn update_text(&mut self, text: &'a String) {
+    pub fn update_text(&mut self, text: String) {
         self.text = text;
         self.parsed_text = None;
     }
 
     pub fn convert(&'a mut self) {
-        for text in self.text.split('\n') {
+        let texts: Vec<&'a str> = self.text.split('\n').collect();
+        for text in texts {
             self.parse_line(text);
         }
     }
