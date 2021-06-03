@@ -1,4 +1,4 @@
-mod path_args;
+pub mod path_args;
 
 #[derive(Debug)]
 pub struct EnvText<'a> {

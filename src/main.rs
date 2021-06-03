@@ -1,7 +1,7 @@
 // use env_text::EnvText;;
 
 mod env_text;
-mod env_text::path_args;
+mod env_text::path_args::PathArgs;
 
 fn main() {
     let test;
