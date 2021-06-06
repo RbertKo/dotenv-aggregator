@@ -2,6 +2,7 @@
 
 mod env_text;
 
+use env;
 use env_text::path_args::PathArgs;
 
 fn main() {
