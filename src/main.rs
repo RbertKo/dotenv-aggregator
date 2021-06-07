@@ -1,8 +1,7 @@
 // use env_text::EnvText;;
-
 mod env_text;
 
-use env;
+use std::env;
 use env_text::path_args::PathArgs;
 
 fn main() {
