@@ -1,10 +1,15 @@
+use std::io;
+use std::io::Read;
+use std::fs::File;
+use super::EnvText;
+
 #[derive(Debug)]
 pub struct PathArgs<'a> {
     from: &'a str,
     target: &'a str,
 }
 
-pub impl<'a> PathArgs<'a> {
+impl<'a> PathArgs<'a> {
     pub fn new(from: &'a str, target: &'a str) -> PathArgs<'a> {
         PathArgs {
             from,

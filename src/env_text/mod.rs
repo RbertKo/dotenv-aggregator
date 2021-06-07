@@ -1,12 +1,14 @@
 pub mod path_args;
 
+use std::collections::HashMap;
+
 #[derive(Debug)]
 pub struct EnvText<'a> {
     text: String,
     parsed_text: Option<HashMap<&'a str, String>>,
 }
 
-pub impl<'a> EnvText<'a> {
+impl<'a> EnvText<'a> {
     pub fn new(text: String) -> EnvText<'a> {
         EnvText {
             text,
