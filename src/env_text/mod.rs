@@ -16,6 +16,13 @@ impl<'a> EnvText<'a> {
         }
     }
 
+    pub fn convert(&mut self) {
+        let texts: Vec<&str> = self.text.split('\n').collect();
+        for text in texts {
+            self.parse_line(text);
+        }
+    }
+
     fn parse_line(&mut self, text_line: &'a str) {
         let index = text_line.find('=');
 
@@ -38,13 +45,6 @@ impl<'a> EnvText<'a> {
     pub fn update_text(&mut self, text: String) {
         self.text = text;
         self.parsed_text = None;
-    }
-
-    pub fn convert(&'a mut self) {
-        let texts: Vec<&'a str> = self.text.split('\n').collect();
-        for text in texts {
-            self.parse_line(text);
-        }
     }
 
     pub fn migrate_from(&mut self, from: &'a EnvText) {
