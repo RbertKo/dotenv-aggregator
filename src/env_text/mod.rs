@@ -3,13 +3,13 @@ pub mod path_args;
 use std::collections::HashMap;
 
 #[derive(Debug)]
-pub struct EnvText<'a> {
+pub struct EnvText {
     text: String,
-    parsed_text: Option<HashMap<&'a str, String>>,
+    parsed_text: Option<HashMap<String, String>>,
 }
 
-impl<'a> EnvText<'a> {
-    pub fn new(text: String) -> EnvText<'a> {
+impl EnvText {
+    pub fn new(text: String) -> EnvText {
         EnvText {
             text,
             parsed_text: None,
@@ -17,13 +17,13 @@ impl<'a> EnvText<'a> {
     }
 
     pub fn convert(&mut self) {
-        let texts: Vec<&str> = self.text.split('\n').collect();
+        let texts: Vec<String> = self.text.split('\n').map(|x| String::from(x)).collect();
         for text in texts {
-            self.parse_line(text);
+            self.parse_line(text.as_str());
         }
     }
 
-    fn parse_line(&mut self, text_line: &'a str) {
+    fn parse_line(&mut self, text_line: &str) {
         let index = text_line.find('=');
 
         if let None = self.parsed_text {
@@ -35,7 +35,7 @@ impl<'a> EnvText<'a> {
                 let key = &text_line[0 .. _index];
                 let value = &text_line[_index+1 .. text_line.len()];
 
-                _parsed_text.insert(key.trim(), String::from(value.trim()));
+                _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
             } else {
                 // _parsed_text.push(Item::Comment(text_line));
             }
@@ -47,7 +47,7 @@ impl<'a> EnvText<'a> {
         self.parsed_text = None;
     }
 
-    pub fn migrate_from(&mut self, from: &'a EnvText) {
+    pub fn migrate_from(&mut self, from: &EnvText) {
         if self.parsed_text == None {
             // return Result::Err("This instance isn't converted yet.");
         }
