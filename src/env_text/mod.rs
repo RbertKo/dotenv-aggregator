@@ -4,8 +4,8 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct EnvText {
-    text: String,
-    parsed_text: Option<HashMap<String, String>>,
+    pub text: String,
+    pub parsed_text: Option<HashMap<String, String>>,
 }
 
 impl EnvText {
