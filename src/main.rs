@@ -18,11 +18,13 @@ fn main() {
     let test = test.to_env_text();
 
     if let Ok(env) = test {
-        let (mut test1, test2) = env;
+        let (mut test1, mut test2) = env;
 
         {
             test1.convert();
         }
+
+        test2.convert();
         
         println!("{:?}", test1.parsed_text);
 

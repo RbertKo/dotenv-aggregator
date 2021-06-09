@@ -35,6 +35,10 @@ impl EnvText {
                 let key = &text_line[0 .. _index];
                 let value = &text_line[_index+1 .. text_line.len()];
 
+                if key == "" {
+                    return;
+                }
+
                 _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
             } else {
                 // _parsed_text.push(Item::Comment(text_line));
