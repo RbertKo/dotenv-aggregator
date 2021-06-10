@@ -16,7 +16,7 @@ impl EnvText {
         }
     }
 
-    pub fn convert(&mut self) {
+    pub fn parse(&mut self) {
         let texts: Vec<String> = self.text.split('\n').map(|x| String::from(x)).collect();
         for text in texts {
             self.parse_line(text.as_str());
