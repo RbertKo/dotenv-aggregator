@@ -31,18 +31,23 @@ impl EnvText {
         }
 
         if let Some(_parsed_text) = &mut self.parsed_text {
-            if let Some(_index) = index {
-                let key = &text_line[0 .. _index];
-                let value = &text_line[_index+1 .. text_line.len()];
-
-                if key == "" {
-                    return;
-                }
-
-                _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
+            let index = if let Some(_index) = index {
+                _index
             } else {
-                // _parsed_text.push(Item::Comment(text_line));
+                0
+            };
+
+            let key = &text_line[0 .. index];
+            let value = &text_line[index+1 .. text_line.len()];
+
+            if key == "" {
+                return;
             }
+
+            _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
+            // } else {
+                // _parsed_text.push(Item::Comment(text_line));
+            // }
         }
     }
 
