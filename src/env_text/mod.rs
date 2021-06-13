@@ -4,13 +4,15 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct EnvText {
-    pub text: String,
+    comment_idx: usize,
+    text: String,
     pub parsed_text: Option<HashMap<String, String>>,
 }
 
 impl EnvText {
     pub fn new(text: String) -> EnvText {
         EnvText {
+            comment_idx: 0,
             text,
             parsed_text: None,
         }
@@ -24,18 +26,28 @@ impl EnvText {
     }
 
     fn parse_line(&mut self, text_line: &str) {
-        let index = text_line.find('=');
-
         if let None = self.parsed_text {
             self.parsed_text = Some(HashMap::new());
         }
 
         if let Some(_parsed_text) = &mut self.parsed_text {
-            let index = if let Some(_index) = index {
+            let index = if let Some(_index) = text_line.find('=') {
                 _index
             } else {
                 0
             };
+
+            let is_comment: bool = 
+                index == 0
+                || &text_line[0..1] == "#" 
+                || &text_line[0..2] == "//";
+
+            if is_comment {
+                _parsed_text.insert(
+                    String::from(format!("cmt_{}", self.comment_idx)), 
+                    String::from(text_line));
+                self.comment_idx += 1;
+            }
 
             let key = &text_line[0 .. index];
             let value = &text_line[index+1 .. text_line.len()];
@@ -45,13 +57,11 @@ impl EnvText {
             }
 
             _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
-            // } else {
-                // _parsed_text.push(Item::Comment(text_line));
-            // }
         }
     }
 
     pub fn update_text(&mut self, text: String) {
+        self.comment_idx = 0;
         self.text = text;
         self.parsed_text = None;
     }
