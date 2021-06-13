@@ -31,6 +31,7 @@ impl EnvText {
         }
 
         if let Some(_parsed_text) = &mut self.parsed_text {
+            let len = text_line.len();
             let index = if let Some(_index) = text_line.find('=') {
                 _index
             } else {
@@ -39,14 +40,16 @@ impl EnvText {
 
             let is_comment: bool = 
                 index == 0
+                || len < 3
                 || &text_line[0..1] == "#" 
                 || &text_line[0..2] == "//";
 
             if is_comment {
                 _parsed_text.insert(
-                    String::from(format!("cmt_{}", self.comment_idx)), 
+                    String::from(format!("da_cmt_{}", self.comment_idx)), 
                     String::from(text_line));
                 self.comment_idx += 1;
+                return;
             }
 
             let key = &text_line[0 .. index];
@@ -66,17 +69,23 @@ impl EnvText {
         self.parsed_text = None;
     }
 
-    pub fn migrate_from(&mut self, from: &EnvText) {
+    pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if self.parsed_text == None {
-            // return Result::Err("This instance isn't converted yet.");
+            return Result::Err("This instance isn't converted yet.");
         }
 
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, value) in from_map {
+                if (key.contains("da_cmt")) {
+                    continue;
+                }
+
                 if let Some(target_value) = target_map.get_mut(key) {
                     *target_value = value.to_string();
                 }
             }
         }
+
+        return Ok(());
     }
 }
