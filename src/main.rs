@@ -21,10 +21,10 @@ fn main() {
         let (mut test1, mut test2) = env;
 
         {
-            test1.convert();
+            test1.parse();
         }
 
-        test2.convert();
+        test2.parse();
         
         println!("{:?}", test1.parsed_text);
 

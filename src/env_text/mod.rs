@@ -3,20 +3,31 @@ pub mod path_args;
 use std::collections::HashMap;
 
 #[derive(Debug)]
+pub struct Element {
+    value: String,
+    line_num: usize,
+    is_comment: bool,
+}
+
+#[derive(Debug)]
 pub struct EnvText {
-    pub text: String,
-    pub parsed_text: Option<HashMap<String, String>>,
+    comment_idx: usize,
+    line_idx: usize,
+    text: String,
+    pub parsed_text: Option<HashMap<String, Element>>,
 }
 
 impl EnvText {
     pub fn new(text: String) -> EnvText {
         EnvText {
+            comment_idx: 0,
+            line_idx: 0,
             text,
             parsed_text: None,
         }
     }
 
-    pub fn convert(&mut self) {
+    pub fn parse(&mut self) {
         let texts: Vec<String> = self.text.split('\n').map(|x| String::from(x)).collect();
         for text in texts {
             self.parse_line(text.as_str());
@@ -24,44 +35,79 @@ impl EnvText {
     }
 
     fn parse_line(&mut self, text_line: &str) {
-        let index = text_line.find('=');
-
         if let None = self.parsed_text {
             self.parsed_text = Some(HashMap::new());
         }
 
         if let Some(_parsed_text) = &mut self.parsed_text {
-            if let Some(_index) = index {
-                let key = &text_line[0 .. _index];
-                let value = &text_line[_index+1 .. text_line.len()];
-
-                if key == "" {
-                    return;
-                }
-
-                _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
+            let len = text_line.len();
+            let index = if let Some(_index) = text_line.find('=') {
+                _index
             } else {
-                // _parsed_text.push(Item::Comment(text_line));
+                0
+            };
+
+            let is_comment: bool = 
+                index == 0
+                || len < 3
+                || &text_line[0..1] == "#" 
+                || &text_line[0..2] == "//";
+
+            if is_comment {
+                _parsed_text.insert(
+                    String::from(format!("da_cmt_{}", self.comment_idx)), 
+                    Element {
+                        value: String::from(text_line),
+                        line_num: self.line_idx,
+                        is_comment,
+                    }
+                );
+                self.comment_idx += 1;
+                self.line_idx += 1;
+                return;
             }
+
+            let key = &text_line[0 .. index];
+            let value = &text_line[index+1 .. text_line.len()];
+
+            if key == "" {
+                return;
+            }
+
+            _parsed_text.insert(
+                String::from(key.trim()), 
+                Element {
+                    value: String::from(value.trim()),
+                    line_num: self.line_idx,
+                    is_comment: false,
+                }
+            ); 
+            self.line_idx += 1;
         }
     }
 
     pub fn update_text(&mut self, text: String) {
+        self.line_idx = 0;
+        self.comment_idx = 0;
         self.text = text;
         self.parsed_text = None;
     }
 
-    pub fn migrate_from(&mut self, from: &EnvText) {
-        if self.parsed_text == None {
-            // return Result::Err("This instance isn't converted yet.");
-        }
-
+    pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
-            for (key, value) in from_map {
+            for (key, element) in from_map {
+                if (key.contains("da_cmt")) {
+                    continue;
+                }
+
                 if let Some(target_value) = target_map.get_mut(key) {
-                    *target_value = value.to_string();
+                    target_value.value = element.value.to_string();
                 }
             }
-        }
+
+            return Ok(());
+        } 
+            
+        return Result::Err("This instance isn't converted yet.");
     }
 }
