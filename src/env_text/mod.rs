@@ -6,6 +6,7 @@ use std::collections::HashMap;
 pub struct Element {
     value: String,
     line_num: usize,
+    is_comment: bool,
 }
 
 #[derive(Debug)]
@@ -58,6 +59,7 @@ impl EnvText {
                     Element {
                         value: String::from(text_line),
                         line_num: self.line_idx,
+                        is_comment,
                     }
                 );
                 self.comment_idx += 1;
@@ -77,6 +79,7 @@ impl EnvText {
                 Element {
                     value: String::from(value.trim()),
                     line_num: self.line_idx,
+                    is_comment: false,
                 }
             ); 
             self.line_idx += 1;
