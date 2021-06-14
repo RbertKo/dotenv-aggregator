@@ -61,7 +61,7 @@ impl EnvText {
                     }
                 );
                 self.comment_idx += 1;
-                self.line_idx == 1;
+                self.line_idx += 1;
                 return;
             }
 
@@ -84,6 +84,7 @@ impl EnvText {
     }
 
     pub fn update_text(&mut self, text: String) {
+        self.line_idx = 0;
         self.comment_idx = 0;
         self.text = text;
         self.parsed_text = None;
