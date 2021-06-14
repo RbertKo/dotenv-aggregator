@@ -3,16 +3,24 @@ pub mod path_args;
 use std::collections::HashMap;
 
 #[derive(Debug)]
+struct Element {
+    value: String,
+    line_num: usize,
+}
+
+#[derive(Debug)]
 pub struct EnvText {
     comment_idx: usize,
+    line_idx: usize,
     text: String,
-    pub parsed_text: Option<HashMap<String, String>>,
+    pub parsed_text: Option<HashMap<String, Element>>,
 }
 
 impl EnvText {
     pub fn new(text: String) -> EnvText {
         EnvText {
             comment_idx: 0,
+            line_idx: 0,
             text,
             parsed_text: None,
         }
@@ -47,8 +55,13 @@ impl EnvText {
             if is_comment {
                 _parsed_text.insert(
                     String::from(format!("da_cmt_{}", self.comment_idx)), 
-                    String::from(text_line));
+                    Element {
+                        value: String::from(text_line),
+                        line_num: self.line_idx,
+                    }
+                );
                 self.comment_idx += 1;
+                self.line_idx == 1;
                 return;
             }
 
@@ -59,7 +72,14 @@ impl EnvText {
                 return;
             }
 
-            _parsed_text.insert(String::from(key.trim()), String::from(value.trim()));
+            _parsed_text.insert(
+                String::from(key.trim()), 
+                Element {
+                    value: String::from(value.trim()),
+                    line_num: self.line_idx,
+                }
+            ); 
+            self.line_idx += 1;
         }
     }
 
@@ -75,13 +95,13 @@ impl EnvText {
         }
 
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
-            for (key, value) in from_map {
+            for (key, element) in from_map {
                 if (key.contains("da_cmt")) {
                     continue;
                 }
 
                 if let Some(target_value) = target_map.get_mut(key) {
-                    *target_value = value.to_string();
+                    target_value.value = element.value.to_string();
                 }
             }
         }
