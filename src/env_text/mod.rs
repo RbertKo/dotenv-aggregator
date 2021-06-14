@@ -3,7 +3,7 @@ pub mod path_args;
 use std::collections::HashMap;
 
 #[derive(Debug)]
-struct Element {
+pub struct Element {
     value: String,
     line_num: usize,
 }
@@ -90,10 +90,6 @@ impl EnvText {
     }
 
     pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
-        if self.parsed_text == None {
-            return Result::Err("This instance isn't converted yet.");
-        }
-
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
                 if (key.contains("da_cmt")) {
@@ -104,8 +100,10 @@ impl EnvText {
                     target_value.value = element.value.to_string();
                 }
             }
-        }
 
-        return Ok(());
+            return Ok(());
+        } 
+            
+        return Result::Err("This instance isn't converted yet.");
     }
 }
