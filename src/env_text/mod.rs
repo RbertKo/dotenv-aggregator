@@ -110,4 +110,8 @@ impl EnvText {
             
         return Result::Err("This instance isn't converted yet.");
     }
+
+    pub fn export(&self, path: &str) {
+
+    }
 }
