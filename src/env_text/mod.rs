@@ -1,5 +1,6 @@
 pub mod path_args;
 
+use std::iter;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -105,10 +106,31 @@ impl EnvText {
                 }
             }
 
+            self.text = String::from(self.stringify()?);
+
             return Ok(());
         } 
             
         return Result::Err("This instance isn't converted yet.");
+    }
+
+    fn get_parsed_text(&self) -> Result<HashMap<String, Element>, &str> {
+        if let Some(_parsed_text) = self.parsed_text {
+            return Ok(_parsed_text)
+        } else {
+            return Result::Err("This instance isn't converted yet.");
+        };
+    }
+
+    fn stringify(&self) -> Result<&str, &str> {
+        let mut text: &str = "";
+        let parsed_text = self.get_parsed_text();
+
+        for (key, element) in parsed_text.iter().collect() {
+            writeln!(text, format!("{}={}", key, element.value));
+        }
+
+        return Ok(text);
     }
 
     pub fn export(&self, path: &str) {
