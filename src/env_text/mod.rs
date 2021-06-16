@@ -55,7 +55,7 @@ impl EnvText {
 
             if is_comment {
                 _parsed_text.insert(
-                    String::from(format!("da_cmt_{}", self.comment_idx)), 
+                    String::from(format!("#{}", self.comment_idx)), 
                     Element {
                         value: String::from(text_line),
                         line_num: self.line_idx,
@@ -96,7 +96,7 @@ impl EnvText {
     pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
-                if (key.contains("da_cmt")) {
+                if (key.contains("#")) {
                     continue;
                 }
 
