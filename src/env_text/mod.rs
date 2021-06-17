@@ -1,6 +1,5 @@
 pub mod path_args;
 
-use std::iter;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -97,7 +96,7 @@ impl EnvText {
     pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
-                if (key[0] == "#") {
+                if &key[0..1] == "#" {
                     continue;
                 }
 
@@ -106,7 +105,7 @@ impl EnvText {
                 }
             }
 
-            self.text = String::from(self.stringify()?);
+            self.text = self.stringify()?;
 
             return Ok(());
         } 
@@ -114,23 +113,18 @@ impl EnvText {
         return Result::Err("This instance isn't converted yet.");
     }
 
-    fn get_parsed_text(&self) -> Result<HashMap<String, Element>, &str> {
-        if let Some(_parsed_text) = self.parsed_text {
-            return Ok(_parsed_text)
+    fn stringify(&mut self) -> Result<String, &'static str> {
+        let mut text = String::from("");
+
+        if let Some(_parsed_text) = &self.parsed_text {
+            for (key, element) in _parsed_text {
+                text = text + format!("{}={}\n", &key, &element.value).as_str();
+            }
+    
+            return Ok(text);
         } else {
             return Result::Err("This instance isn't converted yet.");
-        };
-    }
-
-    fn stringify(&self) -> Result<String, &str> {
-        let mut text = String::from("");
-        let parsed_text = self.get_parsed_text();
-
-        for (key, element) in parsed_text.iter().collect() {
-            writeln!(&mut text, "{}={}", key, element.value)?;
-        }
-
-        return Ok(text);
+        };        
     }
 
     pub fn export(&self, path: &str) {
