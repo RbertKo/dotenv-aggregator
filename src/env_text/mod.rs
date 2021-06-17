@@ -13,7 +13,7 @@ pub struct Element {
 pub struct EnvText {
     comment_idx: usize,
     line_idx: usize,
-    text: String,
+    pub text: String,
     pub parsed_text: Option<HashMap<String, Element>>,
 }
 
@@ -118,6 +118,11 @@ impl EnvText {
 
         if let Some(_parsed_text) = &self.parsed_text {
             for (key, element) in _parsed_text {
+                if &key[0..1] == "#" {
+                    text = text + &element.value + "\n";
+                    continue
+                }
+
                 text = text + format!("{}={}\n", &key, &element.value).as_str();
             }
     
