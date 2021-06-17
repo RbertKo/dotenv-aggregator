@@ -97,7 +97,7 @@ impl EnvText {
     pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
-                if (key.contains("#")) {
+                if (key[0] == "#") {
                     continue;
                 }
 
@@ -122,12 +122,12 @@ impl EnvText {
         };
     }
 
-    fn stringify(&self) -> Result<&str, &str> {
-        let mut text: &str = "";
+    fn stringify(&self) -> Result<String, &str> {
+        let mut text = String::from("");
         let parsed_text = self.get_parsed_text();
 
         for (key, element) in parsed_text.iter().collect() {
-            writeln!(text, format!("{}={}", key, element.value));
+            writeln!(&mut text, "{}={}", key, element.value)?;
         }
 
         return Ok(text);
