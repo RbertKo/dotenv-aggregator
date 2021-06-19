@@ -31,6 +31,8 @@ fn main() {
         test1.migrate_from(&test2);
 
         println!("{:?}", test1.text);
+
+        test1.export("test");
     }
 }
 
