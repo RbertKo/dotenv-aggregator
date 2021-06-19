@@ -1,6 +1,10 @@
 pub mod path_args;
 
+use std::io::prelude::*;
+use std::io;
+use std::fs::File;
 use std::collections::HashMap;
+use std::iter::FromIterator;
 
 #[derive(Debug)]
 pub struct Element {
@@ -13,7 +17,7 @@ pub struct Element {
 pub struct EnvText {
     comment_idx: usize,
     line_idx: usize,
-    text: String,
+    pub text: String,
     pub parsed_text: Option<HashMap<String, Element>>,
 }
 
@@ -55,7 +59,7 @@ impl EnvText {
 
             if is_comment {
                 _parsed_text.insert(
-                    String::from(format!("da_cmt_{}", self.comment_idx)), 
+                    String::from(format!("#{}", self.comment_idx)), 
                     Element {
                         value: String::from(text_line),
                         line_num: self.line_idx,
@@ -96,7 +100,7 @@ impl EnvText {
     pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
-                if (key.contains("da_cmt")) {
+                if &key[0..1] == "#" {
                     continue;
                 }
 
@@ -105,9 +109,40 @@ impl EnvText {
                 }
             }
 
+            self.text = self.stringify()?;
+
             return Ok(());
         } 
             
         return Result::Err("This instance isn't converted yet.");
+    }
+
+    fn stringify(&mut self) -> Result<String, &'static str> {
+        let mut text = String::from("");
+
+        if let Some(_parsed_text) = &self.parsed_text {
+            let mut parsed_value = Vec::from_iter(_parsed_text.iter());
+            parsed_value.sort_by_key(|element| element.1.line_num);
+
+            for (key, element) in parsed_value {
+                if &key[0..1] == "#" {
+                    text = text + &element.value + "\n";
+                    continue
+                }
+
+                text = text + format!("{}={}\n", &key, &element.value).as_str();
+            }
+    
+            return Ok(text);
+        } else {
+            return Result::Err("This instance isn't converted yet.");
+        };        
+    }
+
+    pub fn export(&self, path: &str) -> Result<(), io::Error>{
+        let mut buffer = File::create(path)?;
+
+        buffer.write(self.text.as_bytes())?;
+        Ok(())
     }
 }

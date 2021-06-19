@@ -26,11 +26,13 @@ fn main() {
 
         test2.parse();
         
-        println!("{:?}", test1.parsed_text);
+        println!("{:?}", test1.text);
 
         test1.migrate_from(&test2);
 
-        println!("{:?}", test1.parsed_text);
+        println!("{:?}", test1.text);
+
+        test1.export("test");
     }
 }
 
