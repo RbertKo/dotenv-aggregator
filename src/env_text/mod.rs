@@ -1,6 +1,8 @@
 pub mod path_args;
 
 use std::collections::HashMap;
+use std::iter::FromIterator;
+use std::iter::IntoIterator::into_iter;
 
 #[derive(Debug)]
 pub struct Element {
@@ -117,7 +119,7 @@ impl EnvText {
         let mut text = String::from("");
 
         if let Some(_parsed_text) = &self.parsed_text {
-            for (key, element) in _parsed_text {
+            for (key, element) in Vec::from_iter(_parsed_text.iter()).sort_by_key(|a| a.value.line_idx) {
                 if &key[0..1] == "#" {
                     text = text + &element.value + "\n";
                     continue
