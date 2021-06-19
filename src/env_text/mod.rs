@@ -1,5 +1,8 @@
 pub mod path_args;
 
+use std::io::prelude::*;
+use std::io;
+use std::fs::File;
 use std::collections::HashMap;
 use std::iter::FromIterator;
 
@@ -136,7 +139,10 @@ impl EnvText {
         };        
     }
 
-    pub fn export(&self, path: &str) {
+    pub fn export(&self, path: &str) -> Result<(), io::Error>{
+        let mut buffer = File::create(path)?;
 
+        buffer.write(self.text.as_bytes())?;
+        Ok(())
     }
 }
