@@ -1,5 +1,3 @@
-pub mod path_args;
-
 use std::io::prelude::*;
 use std::io;
 use std::fs::File;
@@ -22,13 +20,20 @@ pub struct EnvText {
 }
 
 impl EnvText {
-    pub fn new(text: String) -> EnvText {
-        EnvText {
-            comment_idx: 0,
-            line_idx: 0,
-            text,
-            parsed_text: None,
-        }
+    pub fn new(path: &str) -> Result<EnvText, io::Error> {
+        let mut f = File::open(path)?;
+        let mut text = String::new();
+
+        f.read_to_string(&mut text)?;
+
+        Ok(
+            EnvText {
+                comment_idx: 0,
+                line_idx: 0,
+                text,
+                parsed_text: None,
+            }
+        )
     }
 
     pub fn parse(&mut self) {

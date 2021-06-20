@@ -1,39 +1,36 @@
 // use env_text::EnvText;;
-mod env_text;
+mod lib;
 
 use std::env;
-use env_text::path_args::PathArgs;
+
+use lib::env_text::EnvText;
 
 fn main() {
-    let test;
+    let mut target_env;
+    let mut from_env;
 
     let _args: Vec<String> = env::args().collect();
 
-    if let (Some(_from), Some(_target)) = (_args.get(1), _args.get(2)) {
-        test = PathArgs::new(_from, _target);
+    if let (Some(_target), Some(_from)) = (_args.get(1), _args.get(2)) {
+        target_env = EnvText::new(_target).unwrap();
+        from_env = EnvText::new(_from).unwrap();
     } else {
         panic!("You've to send arguments \"from\", \"target\"")
     }
 
-    let test = test.to_env_text();
-
-    if let Ok(env) = test {
-        let (mut test1, mut test2) = env;
-
-        {
-            test1.parse();
-        }
-
-        test2.parse();
-        
-        println!("{:?}", test1.text);
-
-        test1.migrate_from(&test2);
-
-        println!("{:?}", test1.text);
-
-        test1.export("test");
+    {
+        target_env.parse();
     }
+
+    from_env.parse();
+    
+    println!("{:?}", target_env.text);
+
+    target_env.migrate_from(&from_env);
+
+    println!("{:?}", target_env.text);
+
+    target_env.export("test");
 }
 
 
