@@ -18,13 +18,13 @@ fn main() {
         panic!("You've to send arguments \"from\", \"target\"")
     }
 
-    target_env.parse();
+    // target_env.parse();
 
-    from_env.parse();
+    // from_env.parse();
 
-    target_env.migrate_from(&from_env);
+    target_env.migrate_from(&from_env).unwrap();
 
-    target_env.export("test");
+    target_env.export("test").unwrap();
 }
 
 

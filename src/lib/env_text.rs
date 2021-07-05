@@ -3,6 +3,7 @@ use std::io;
 use std::fs::File;
 use std::collections::HashMap;
 use std::iter::FromIterator;
+use crate::lib::error;
 
 #[derive(Debug)]
 pub struct Element {
@@ -20,7 +21,7 @@ pub struct EnvText {
 }
 
 impl EnvText {
-    pub fn new(path: &str) -> Result<EnvText, io::Error> {
+    pub fn new(path: &str) -> Result<EnvText, error::Error> {
         let mut f = File::open(path)?;
         let mut text = String::new();
 
@@ -102,7 +103,7 @@ impl EnvText {
         self.parsed_text = None;
     }
 
-    pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), &str> {
+    pub fn migrate_from(&mut self, from: &EnvText) -> Result<(), error::Error> {
         if let (Some(target_map), Some(from_map)) = (&mut self.parsed_text, &from.parsed_text) {
             for (key, element) in from_map {
                 if &key[0..1] == "#" {
@@ -119,10 +120,10 @@ impl EnvText {
             return Ok(());
         } 
             
-        return Result::Err("This instance isn't converted yet.");
+        return Result::Err(error::Error::NotConvertError);
     }
 
-    fn stringify(&mut self) -> Result<String, &'static str> {
+    fn stringify(&mut self) -> Result<String, error::Error> {
         let mut text = String::from("");
 
         if let Some(_parsed_text) = &self.parsed_text {
@@ -140,11 +141,11 @@ impl EnvText {
     
             return Ok(text);
         } else {
-            return Result::Err("This instance isn't converted yet.");
+            return Result::Err(error::Error::NotConvertError);
         };        
     }
 
-    pub fn export(&self, path: &str) -> Result<(), io::Error>{
+    pub fn export(&self, path: &str) -> Result<(), error::Error>{
         let mut buffer = File::create(path)?;
 
         buffer.write(self.text.as_bytes())?;
