@@ -5,7 +5,9 @@ Dotenv Aggregator is migration tool for dotenv. You can migrate already existed 
 
 ## Installation
 
-TBA
+``` bash
+cargo install dotenv-aggregator --version 0.0.1-alpha
+```
 
 ## Usage
 
