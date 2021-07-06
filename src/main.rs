@@ -18,13 +18,15 @@ fn main() {
         panic!("You've to send arguments \"from\", \"target\"")
     }
 
-    // target_env.parse();
+    target_env.parse();
 
-    // from_env.parse();
+    from_env.parse();
 
-    target_env.migrate_from(&from_env).unwrap();
+    if let Err(err) = target_env.migrate_from(&from_env) {
+        panic!("{}", err);
+    }
 
-    target_env.export("test").unwrap();
+    target_env.export("test").expect("Error occured while trying to export.");
 }
 
 
